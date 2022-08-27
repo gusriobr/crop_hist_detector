@@ -33,10 +33,11 @@ The input dataset for this project is a sequence of land usage codes for the las
 been obtained following these steps:
 
 - First 1 million points have been chosen randomly in the area of Castilla y León.
-- For each point, the coordinates are used to extract the raster information of each year, obtaining a 10 year code
-  sequence. Once the datasets is created, the codes area reviewed and mapped using the raster symbology information (
-  relation between code and land usage) to make sure the same land usage is referred using the same code among all the
-  years.
+- For each point, the coordinates are used to extract the pixel value (land usage code) from each yearly raster,
+  obtaining a 10-year code sequence.
+- Once the sequence is obtained, the code are reviewed and mapped to current year code list (2021) using the raster
+  symbology information (relation between code and land usage). This way each land usage is referred using the same code
+  among all the years.
 
 The land usage codes is not homogeneous among all the years, the script `transform_codes.py` includes the code to map
 each year code list to the reference year code table. (Currently 2021).
