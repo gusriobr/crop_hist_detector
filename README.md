@@ -49,6 +49,8 @@ that 2M points. To create the dataset run these scripts in this order:
 2. `transform_codes.py`: transform all codes to current year reference code table.
 3. `create_dataset.py`: create final dataset with code conversion file created in step 2.
 
+A small exploratory analysis is made in [dataset_review.ipynb](src/cropseq/data/notebooks/dataset_review.ipynb).
+
 # Analyzing the data
 
 Conclusions
