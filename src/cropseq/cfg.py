@@ -84,8 +84,10 @@ def get(var_name):
 
 
 def get_base_folder():
-    # ../../ hasta la base del proyecto
-    return os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    # ../../ up to project base folder
+    module_path = os.path.normpath(__file__)
+    project_base_folder = os.path.normpath(os.path.dirname(os.path.dirname(os.path.dirname(module_path))))
+    return os.path.normpath(project_base_folder)
 
 
 def project_file(file_path):
@@ -134,12 +136,6 @@ def results(path):
 
 def resource(path):
     file_path = os.path.join(get_resources_folder(), path)
-    _mk_if_not_exists(file_path)
-    return file_path
-
-
-def dlake(path):
-    file_path = os.path.join(get_datalake_folder(), path)
     _mk_if_not_exists(file_path)
     return file_path
 

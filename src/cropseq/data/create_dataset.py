@@ -1,7 +1,7 @@
 import logging
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from cropseq import cfg
 from cropseq.data.transform_codes import read_symbology_file
@@ -37,30 +37,81 @@ def get_column_mapping(df_mapping, year):
     return mapping
 
 
-def run_transform():
+def map_codes_to_current_year(df, df_mapping):
+    for year in range(2011, 2021):
+        col_mapping = get_column_mapping(df_mapping, year)
+        logging.info("Transforming codes for year {}".format(year))
+        # land usage codes without mapping in the current year will remain as 0
+        df[str(year)] = df[str(year)].apply(lambda x: col_mapping.get(x, 0))
+        df[str(year)] = df[str(year)].astype(np.uint8)
+    return df
+
+
+def manual_code_revision(df):
+    """
+    Some codes used in year 2021 aren't abailable in previous years, it seems, some categories have been extracted from
+    bigger groups like lentis from leguminous. This new categories are available just in the last two years.
+    To keep the categories homogeneous as much as possible, these land usages are merged back to the main groups.
+    """
+    merge_groups = {  # "GARBANZO": "OTRAS LEGUMINOSAS",
+        54: 45,
+        # "LENTEJAS": "OTRAS LEGUMINOSAS",
+        55: 45,
+        # ALUBIAS": "OTRAS LEGUMINOSAS",
+        57: 45,
+        # "YEROS": "FORRAJERAS",
+        58: 11,
+        # "ESPARCETA": "FORRAJERAS",
+        67: 11,
+        # "ZANAHORIA": "HORTICOLAS",
+        60: 17,
+        # "AJO": "HORTICOLAS",
+        61: 17,
+        # "CEBOLLA": "HORTICOLAS",
+        62: 17,
+        # "FRESAS": "HORTICOLAS",
+        63: 17,
+        # "PUERROS": "HORTICOLAS",
+        64: 17,
+    }
+    # convertimos las descdripciones a códigos
+    for year in range(2011, 2022):
+        logging.info("Grouping codes into main land usage categories for year {}".format(year))
+        year_col = str(year)
+        df[year_col] = df[year_col].apply(lambda x: merge_groups.get(x, x))
+        df[year_col] = df[year_col].astype(np.uint8)
+    return df
+
+
+def run_create_dataset():
     # read code mappings
     mapping_file = cfg.resource("code_mapping.xlsx")
     df_mapping = pd.read_excel(mapping_file)
     # open sequence file and transform each column
     seq_file = cfg.resource("samples_sequence.pickle")
     df_sequence = pd.read_pickle(seq_file)
-    for year in range(2011, 2021):
-        col_mapping = get_column_mapping(df_mapping, year)
-        logging.info("Transforming codes for year {}".format(year))
-        df_sequence[str(year)] = df_sequence[str(year)].apply(lambda x: col_mapping.get(x, x))
-        df_sequence[str(year)] = df_sequence[str(year)].astype(np.uint8)
+    # filter samples that has a 0 in any column of the sequence, this means that the point has no value in the raster
+    df_sequence = df_sequence[~df_sequence.isin([0]).any(axis=1)]
+
+    df_sequence = map_codes_to_current_year(df_sequence, df_mapping)
+    df_sequence = manual_code_revision(df_sequence)
 
     # read year reference symbology file
     ref_symb_file = cfg.resource("data/codes/codes_2021.csv")
     df_symb = read_symbology_file(ref_symb_file, cols=['code', 'cubierta', 'land_usage'])
     df_symb["code"] = df_symb["code"].astype(np.uint8)
 
-    # add names to the sequence
+    # remove data from 2022, symb file is missing
     df_sequence = df_sequence.merge(df_symb, how="left", left_on="2021", right_on="code")
     df_sequence = df_sequence.drop(["code", "2022"], axis=1)
+
+    # add names to the sequence
     df_sequence.to_pickle(cfg.resource("dataset.pickle"))
 
     logging.info("Dataset created successfully!")
 
+    return df_sequence
+
+
 if __name__ == '__main__':
-    run_transform()
+    df_dataset = run_create_dataset()

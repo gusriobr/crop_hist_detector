@@ -122,6 +122,33 @@ fixed_mapping = {
     "TRITICALE": "OTROS CEREALES"
 }
 
+def manual_code_revision(df):
+    """
+    Some codes used in year 2021 aren't abailable in previous years, it seems, some categories have been extracted from bigger groups like lentis from leguminous.
+    This new categories are available just in the last two years. To keep the categories homogeneous as much as possible, this land usages are merged back to the main groups.
+    """
+    merge_groups = {  # "GARBANZO": "OTRAS LEGUMINOSAS",
+        54: 45,
+        # "LENTEJAS": "OTRAS LEGUMINOSAS",
+        55: 45,
+        # ALUBIAS": "OTRAS LEGUMINOSAS",
+        57: 45,
+        # "YEROS": "FORRAJERAS",
+        58: 11,
+        # "ESPARCETA": "FORRAJERAS",
+        67: 11,
+        # "ZANAHORIA": "HORTICOLAS",
+        60: 17,
+        # "AJO": "HORTICOLAS",
+        61: 17,
+        # "CEBOLLA": "HORTICOLAS",
+        62: 17,
+        # "FRESAS": "HORTICOLAS",
+        63: 17,
+        # "PUERROS": "HORTICOLAS",
+        64: 17,
+    }
+
 # read last year codes
 if __name__ == '__main__':
     codes_folder = cfg.resource('data/codes')
