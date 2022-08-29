@@ -49,8 +49,28 @@ that 2M points. To create the dataset run these scripts in this order:
 2. `transform_codes.py`: transform all codes to current year reference code table.
 3. `create_dataset.py`: create final dataset with code conversion file created in step 2.
 
-A small exploratory analysis is made in [dataset_review.ipynb](src/cropseq/data/notebooks/dataset_review.ipynb).
-
 # Analyzing the data
 
-Conclusions
+The exploratory analysis is made in [dataset_review.ipynb](src/cropseq/data/notebooks/dataset_review.ipynb). Whe can
+summarize the findinds as:
+
+- Percentage 36.71% of sample points have a code that can be grouped as Not cultivated área: ("Bare soil", "Scrub", "
+  Grassland", "Artificial", etc.).
+- Some crops are overrepresented and gather around 80% of the cultivated area: wheat, barley, suflower, maize and oat
+  mainly.
+- About the land usage variation among years, as mean, 65% of the records show a change in the land usage.
+- If we put apart the land usages that are not expected to change (ex: woody crops, trees, water bodies, vineyard,
+  olive, rocky areas, etc), this percentage raises to 70%.
+- Analyzing the possible combinations included in the dataset, the top combinations add up 53% of total variations
+  represented in the samples.
+- With this information, we can build a conditional distribution that rules the passing from one land usage to other as the
+  conditional probability: p(land_usage<sub>i</sub> | land_usage<sub>j</sub>). We can calculate these probabilities just
+  counting the variations from one land usage to others, for example we know that **25% of the times a farmer grows
+  wheat, next year he/she grows barley**. These probabilities can be used to create the base model.
+
+# Model 0: base model
+
+Using the land usage variations found in the dataset we can create a table that gives us the probability of each crop on
+the next year. Using this table as conditional probability we can simulate the prediction of the next year land usages.
+
+[Base model](src/cropseq/data/notebooks/dataset_review.ipynb#Estimating-base-model)
