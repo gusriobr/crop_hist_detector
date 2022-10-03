@@ -1,4 +1,5 @@
 import logging
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -105,13 +106,47 @@ def run_create_dataset():
     df_sequence = df_sequence.merge(df_symb, how="left", left_on="2021", right_on="code")
     df_sequence = df_sequence.drop(["code", "2022"], axis=1)
 
-    # add names to the sequence
-    df_sequence.to_pickle(cfg.resource("dataset.pickle"))
+    # remove data with no data in any column (code == 0)
+    col_years = ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
+    nodata_mask = df_sequence[(df_sequence[col_years] == 0).any(axis=1)]
+    nodata_mask = (df_sequence[col_years] == 0).any(axis=1)
 
-    logging.info("Dataset created successfully!")
+    logging.info(
+        "Number of records found with no-data (value = '0') in any column: {}. They'll be excluded from dataset!".format(
+            df_sequence[nodata_mask].shape[0]))
+    df_sequence = df_sequence[~nodata_mask]
+
+    # add names to the sequence
+    dts_file = cfg.resource("dataset.pickle")
+    df_sequence.to_pickle(dts_file)
+
+    logging.info(
+        "Dataset created successfully. Number of records: {}. Output_file: {}".format(len(df_sequence), dts_file))
 
     return df_sequence
 
 
+def sample_dataset(df, num_samples: Union[int, float] = 0.1):
+    """
+    Samples original dataset to randomly extract the number of records given in parameter
+    :param df:
+    :param num_samples:
+    :return:
+    """
+    value = num_samples
+    if value > 1:
+        param = "n"
+        value = int(value)
+    else:
+        param = "frac"
+    df_sample = df.sample(**{param: value})
+    return df_sample
+
+
 if __name__ == '__main__':
     df_dataset = run_create_dataset()
+    logging.info("Sampling original dataset to create a test version with 10k samples.")
+    df_sampled = sample_dataset(df_dataset, num_samples=1e5)
+
+    output_file = cfg.resource("dataset_sample.pickle")
+    df_sampled.to_pickle(output_file)

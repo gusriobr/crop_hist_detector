@@ -83,24 +83,29 @@ prediction based just on last year is not an acceptable option.
 
 [Base model](src/cropseq/data/notebooks/dataset_review.ipynb#Estimating-base-model)
 
-
 # Model 1: Hidden Markov Models
+
 In this case HMM let us calculate the conditional probability taken into account he full sequence.
 
+Transition matrix In addition to using the forward-backward algorithm to just calculate posterior probabilities for each
+observation, we can count the number of transitions that are predicted to occur between the hidden states.
 
+This is the transition table, which has the soft count of the number of transitions across an edge in the model given a
+single sequence. It is a square matrix of size equal to the number of states (including start and end state), with
+number of transitions from (row_id) to (column_id).
 
+**After running the experiment for multiple possible states, and for each state multiple times to avoid getting stuck in
+local minima, the best number of state seems to be 12. The log-prob keeps increasing with higher number of states, but
+the classifier metrics (f1 and kappa) measured on the test split start going downwards what might be and indicator for
+model over-fitting. See  [evaluate_model.ipynb](src/cropseq/hmm/notebooks/evaluate_model.ipynb) for detailed data about
+the model fitting and state selection.
+Final model transition can be as svg file: [Final model graph](resources/docs/hmm/final_model_plot.svg)
 
-
-
-probabilidad de estar en cada uno de los estados
-hmm.predict_proba(seq)
-
-Transition matrix
-In addition to using the forward-backward algorithm to just calculate posterior probabilities for each observation, we can count the number of transitions that are predicted to occur between the hidden states.
-
-This is the transition table, which has the soft count of the number of transitions across an edge in the model given a single sequence. It is a square matrix of size equal to the number of states (including start and end state), with number of transitions from (row_id) to (column_id).
+Having set the number of hidden states, next step is to train the model multiple times with full data and measure the
+prediction performance of the model.
 
 # References
+
 https://github.com/jmschrei/pomegranate/blob/master/tutorials/B_Model_Tutorial_3_Hidden_Markov_Models.ipynb
 
 https://stats.stackexchange.com/questions/71940/hidden-markov-model-to-predict-the-next-state
@@ -108,3 +113,7 @@ https://stats.stackexchange.com/questions/71940/hidden-markov-model-to-predict-t
 Pomegranate
 https://medium.com/analytics-vidhya/how-to-build-a-simple-hidden-markov-models-with-pomegranate-dfa885b337fb
 https://notebook.community/jmschrei/pomegranate/tutorials/B_Model_Tutorial_3_Hidden_Markov_Models
+
+De Souza e Silva, Edmundo & Leão, Rosa & Muntz, Richard. (2010). Performance Evaluation with Hidden Markov Models.
+112-128. 10.1007/978-3-642-25575-5_10.
+https://www.researchgate.net/publication/221152778_Performance_Evaluation_with_Hidden_Markov_Models
