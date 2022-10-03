@@ -99,10 +99,13 @@ local minima, the best number of state seems to be 12. The log-prob keeps increa
 the classifier metrics (f1 and kappa) measured on the test split start going downwards what might be and indicator for
 model over-fitting. See  [evaluate_model.ipynb](src/cropseq/hmm/notebooks/evaluate_model.ipynb) for detailed data about
 the model fitting and state selection.
-Final model transition can be as svg file: [Final model graph](resources/docs/hmm/final_model_plot.svg)
+
+Final model transition can be visualized using graphviz as a svg
+file: [Final model graph](resources/docs/hmm/final_model_plot.svg)
 
 Having set the number of hidden states, next step is to train the model multiple times with full data and measure the
-prediction performance of the model.
+prediction performance of the model. After this process the final model outcomes **f1=0.43 and kappa= 0.38**. The model
+outperforms the base model but keeps performing poorly.
 
 # References
 

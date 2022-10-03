@@ -1,33 +1,26 @@
-import json
-import operator
+import logging
 import pickle
-from matplotlib import pyplot as  plt
 
-import numpy as np
-from pomegranate import DiscreteDistribution, HiddenMarkovModel
-from sklearn.metrics import f1_score, cohen_kappa_score
-from sklearn.model_selection import train_test_split
+from matplotlib import pyplot as plt
 
 from cropseq import cfg
-
 # sys.path.append("../../../")
 from cropseq.graph import plot_model
+from cropseq.hmm.train import calc_clf_metrics
 
 cfg.configLog()
 
 model = pickle.load(file=open(cfg.results("hmm_granade.pickle"), 'rb'))
+df = pickle.load(file=open(cfg.resource("dataset.pickle"), 'rb'))
 
-print("Número de estados: {}".format(len(model.states)))
-model.plot(precision = 3)
+cols_years = ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
+X = df[cols_years].values
+# y = df["2021"].values  # just to call split method, we will discard this
 
-import tempfile
-print(str(tempfile.tempdir))
-
-plot_model(model, format="svg ", output_file="/tmp/salida.svg")
-plt.figure(figsize=(30, 20), dpi=120)
-plt.show()
-
+# lets run the model against the full dataset and check the f1 metrics and test some samples, compared with the inital trie
+metrics = calc_clf_metrics(model, X)
+result = {"f1": metrics[0], "kappa": metrics[1]}
+logging.info("Classification metrics: {}".format(result))
 
 
-pass
-
+# plot_model(model, format="svg ", output_file="/tmp/salida.svg")
