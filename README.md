@@ -76,8 +76,8 @@ summarize the findinds as:
 Using the land usage variations found in the dataset we can create a table that gives us the probability of each crop on
 the next year. Using this table as conditional probability we can simulate the prediction of the next year land usages.
 
-We create the CDF with data from years 2011-2020 and predict on 2021. As expected, the model performs poorly with a **
-f1-score 0.29**. The model can predict acceptably the stable land usage categories (trees, artificial surfaces,
+We create the CDF with data from years 2011-2020 and predict on 2021. As expected, the model performs poorly with a
+**f1-score 0.29**. The model can predict acceptably the stable land usage categories (trees, artificial surfaces,
 vineyard, etc.) and over-represented crops (wheat and barley). As we have seen, the variation of crops is around 70% so
 prediction based just on last year is not an acceptable option.
 
@@ -104,8 +104,8 @@ Final model transition can be visualized using graphviz as a svg
 file: [Final model graph](resources/docs/hmm/final_model_plot.svg)
 
 Having set the number of hidden states, next step is to train the model multiple times with full data and measure the
-prediction performance of the model. After this process the final model outcomes **f1-score=0.43 and kappa= 0.38**. The model
-outperforms the base model but keeps performing poorly.
+prediction performance of the model. After this process the final model outcomes **f1-score=0.43 and kappa= 0.38**. The
+model outperforms the base model but keeps performing poorly.
 
 # References
 
