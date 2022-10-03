@@ -104,7 +104,7 @@ Final model transition can be visualized using graphviz as a svg
 file: [Final model graph](resources/docs/hmm/final_model_plot.svg)
 
 Having set the number of hidden states, next step is to train the model multiple times with full data and measure the
-prediction performance of the model. After this process the final model outcomes **f1=0.43 and kappa= 0.38**. The model
+prediction performance of the model. After this process the final model outcomes **f1-score=0.43 and kappa= 0.38**. The model
 outperforms the base model but keeps performing poorly.
 
 # References
