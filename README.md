@@ -77,7 +77,7 @@ Using the land usage variations found in the dataset we can create a table that 
 the next year. Using this table as conditional probability we can simulate the prediction of the next year land usages.
 
 We create the CDF with data from years 2011-2020 and predict on 2021. As expected, the model performs poorly with a
-**f1-score 0.29**. The model can predict acceptably the stable land usage categories (trees, artificial surfaces,
+**f1-score=0.29**. The model can predict acceptably the stable land usage categories (trees, artificial surfaces,
 vineyard, etc.) and over-represented crops (wheat and barley). As we have seen, the variation of crops is around 70% so
 prediction based just on last year is not an acceptable option.
 
